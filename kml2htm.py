@@ -12,7 +12,7 @@ import html
 # Static program configuration:
 DEFAULT_KML_FILE = "routes.kml"
 DEFAULT_HTM_FILE = "routes.html"
-TILE_COLOR       = "#d187ed"
+TILE_COLOR_RGB   = "d187ed"  # Without '#'
 TILE_OPACITY     = 0.2
 
 
@@ -95,8 +95,8 @@ def main():
   const bounds   = kmlLayer.getBounds();
   map.fitBounds( bounds );
   kmlLayer.setStyle({{  // Omnivore KML does not implement <Style>
-    color:       "{TILE_COLOR}",
-    fillColor:   "{TILE_COLOR}",
+    color:       "#{TILE_COLOR_RGB}",
+    fillColor:   "#{TILE_COLOR_RGB}",
     fillOpacity: {TILE_OPACITY}
   }});
   kmlLayer.addTo( map );

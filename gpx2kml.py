@@ -18,7 +18,7 @@ import simplekml
 DEFAULT_GPX_PATTERN = "./routes/*.gpx"
 DEFAULT_KML_FILE    = "routes.kml"
 DEFAULT_TILE_SIZE_M = 1500
-TILE_COLOR          = simplekml.Color.hex( "d187ed" );  # without '#'
+TILE_COLOR_RGB      = "d187ed"  # without '#'
 TILE_OPACITY        = 0.2
 
 # WGS84 <-> Web Mercator:
@@ -122,11 +122,12 @@ def main():
 	kml = simplekml.Kml()
 	mg  = kml.newmultigeometry()  # Single placemark instead of thousands = smaller KML file
 	
-	# Semi-transparent red (ignored by leaflet-omnivore, not Google My Map)
+	# Semi-transparent color (ignored by leaflet-omnivore, not Google My Map)
+	tile_color                 = simplekml.Color.hex( TILE_COLOR_RGB )
 	tile_style                 = simplekml.Style()
-	tile_style.polystyle.color = simplekml.Color.changealphaint( int(TILE_OPACITY * 255), TILE_COLOR )
-	tile_style.linestyle.color = TILE_COLOR
 	tile_style.linestyle.width = 1
+	tile_style.linestyle.color = tile_color
+	tile_style.polystyle.color = simplekml.Color.changealphaint( int(TILE_OPACITY*255), tile_color )
 	
 	for tx, ty in occupied_tiles:
 		
