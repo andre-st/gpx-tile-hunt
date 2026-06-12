@@ -14,9 +14,9 @@ _Fig: Map showing the visited areas in blue — each 1.5 km² (configurable) in 
 	- Python 3 with pip (usually pre-installed)
 - Usage:
 	```sh
-		$ ./setup.sh     # Installs libs to the project's subdir 'local', so your system stays clean
-		$ ./gpx2kml.py   # Creates tile mesh KML-file from ./routes/*.gpx ; see --help too
-		$ ./kml2htm.py   # Creates a local tile mesh viewer from KML file and OpenStreetMap
+	$ ./setup.sh     # Installs libs to the project's subdir 'local', so your system stays clean
+	$ ./gpx2kml.py   # Creates tile mesh KML-file from ./routes/*.gpx ; see --help too
+	$ ./kml2htm.py   # Creates a local tile mesh viewer from KML-file and OpenStreetMap
 	```
 - Input:
 	- Komoot.com users: [download recorded tours](https://github.com/pieterclaerhout/export-komoot) to the `routes` directory
