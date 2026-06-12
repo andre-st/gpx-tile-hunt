@@ -120,6 +120,7 @@ def main():
 	#
 	
 	kml = simplekml.Kml()
+	mg  = kml.newmultigeometry()  # Single placemark instead of thousands = smaller KML file
 	
 	# Semi-transparent red (ignored by leaflet-omnivore, not Google My Map)
 	tile_style                 = simplekml.Style()
@@ -134,17 +135,18 @@ def main():
 		maxx = minx + args.tile_size_m
 		maxy = miny + args.tile_size_m
 		
-		corners_merc = [
+		corners_merc = [   # in KML rects are polygons with 4 corners + closing point (same as first)
 			(minx, miny),
 			(maxx, miny),
 			(maxx, maxy),
 			(minx, maxy),
-			(minx, miny)
+			(minx, miny) 
 		]
 		
-		corners_wgs = [ to_wgs84.transform( x, y )for x, y in corners_merc ]
+		corners_wgs = [ to_wgs84.transform( x, y )         for x, y     in corners_merc ]
+		corners_wgs = [ (round( lon, 6 ), round( lat, 6 )) for lon, lat in corners_wgs  ]  # less precision = smaller KML file
 		
-		pol       = kml.newpolygon( outerboundaryis=corners_wgs )
+		pol       = mg.newpolygon( outerboundaryis=corners_wgs )
 		pol.style = tile_style
 	
 	
