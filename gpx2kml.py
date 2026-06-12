@@ -18,6 +18,8 @@ import simplekml
 DEFAULT_GPX_PATTERN = "./routes/*.gpx"
 DEFAULT_KML_FILE    = "routes.kml"
 DEFAULT_TILE_SIZE_M = 1500
+TILE_COLOR          = simplekml.Color.hex( "d187ed" );  # without '#'
+TILE_OPACITY        = 0.2
 
 # WGS84 <-> Web Mercator:
 to_merc  = Transformer.from_crs( "EPSG:4326", "EPSG:3857", always_xy=True )
@@ -119,6 +121,12 @@ def main():
 	
 	kml = simplekml.Kml()
 	
+	# Semi-transparent red (ignored by leaflet-omnivore, not Google My Map)
+	tile_style                 = simplekml.Style()
+	tile_style.polystyle.color = simplekml.Color.changealphaint( int(TILE_OPACITY * 255), TILE_COLOR )
+	tile_style.linestyle.color = TILE_COLOR
+	tile_style.linestyle.width = 1
+	
 	for tx, ty in occupied_tiles:
 		
 		minx = tx   * args.tile_size_m
@@ -131,17 +139,13 @@ def main():
 			(maxx, miny),
 			(maxx, maxy),
 			(minx, maxy),
-			(minx, miny),
+			(minx, miny)
 		]
 		
-		corners_wgs = [ to_wgs84.transform( x, y  )for x, y in corners_merc ]
+		corners_wgs = [ to_wgs84.transform( x, y )for x, y in corners_merc ]
 		
-		pol = kml.newpolygon( outerboundaryis=corners_wgs )
-		
-		# Semi-transparent red
-		pol.style.polystyle.color = simplekml.Color.changealphaint( 100, simplekml.Color.red )
-		pol.style.linestyle.color = simplekml.Color.red
-		pol.style.linestyle.width = 1
+		pol       = kml.newpolygon( outerboundaryis=corners_wgs )
+		pol.style = tile_style
 	
 	
 	kml.save( args.kml_file )

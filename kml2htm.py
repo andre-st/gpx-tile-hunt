@@ -12,6 +12,8 @@ import html
 # Static program configuration:
 DEFAULT_KML_FILE = "routes.kml"
 DEFAULT_HTM_FILE = "routes.html"
+TILE_COLOR       = "#d187ed"
+TILE_OPACITY     = 0.2
 
 
 def get_user_args():
@@ -89,10 +91,15 @@ def main():
   }}).addTo(map);
 
   const kmlData  = `{kml_escaped}`;
-  const kmlLayer = omnivore.kml.parse(kmlData);
+  const kmlLayer = omnivore.kml.parse( kmlData );
   const bounds   = kmlLayer.getBounds();
-  map.fitBounds(bounds);
-  kmlLayer.addTo(map);
+  map.fitBounds( bounds );
+  kmlLayer.setStyle({{  // Omnivore KML does not implement <Style>
+    color:       "{TILE_COLOR}",
+    fillColor:   "{TILE_COLOR}",
+    fillOpacity: {TILE_OPACITY}
+  }});
+  kmlLayer.addTo( map );
 
 </script>
 </body>
