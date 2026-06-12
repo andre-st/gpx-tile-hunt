@@ -1,0 +1,12 @@
+*~
+*.bak
+*.tmp
+*.swp
+*.mkv
+routes.html
+routes.kml
+local
+cache
+routes
+.obsolete
+
