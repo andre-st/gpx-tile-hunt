@@ -2,10 +2,12 @@
 
 ![Maintenance](https://img.shields.io/maintenance/yes/2026.svg)
 
-
 ![Tile Hunt Map](README.jpg)  
 _Fig: Tile mesh at different zoom levels_
 
+- Why: Statshunters.com supposedly allows registration without Strava, but currently, 
+	I only see options to log in via email or Strava, with no actual sign-up options.  
+	So, I built something of my own.
 - Installation and usage:
 	```sh
 		$ ./setup.sh     # installs python-libs etc to the project's subdir 'local', so your system stays clean
