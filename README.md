@@ -1,17 +1,19 @@
-# GPX Tile Hunt - Identify undiscovered areas more easily
+# Simple GPX Tile Hunt - Identify undiscovered areas
 
 ![Maintenance](https://img.shields.io/maintenance/yes/2026.svg)
 
 ![Tile Hunt Map](README.jpg)  
-_Fig: Tile mesh at different zoom levels_
+_Fig: mesh of visited tiles with 1,5 km² fixed size at different map zoom levels_
 
-- Why: Statshunters.com supposedly allows registration without Strava, but currently, 
-	I only see options to log in via email or Strava, with no actual sign-up options.  
-	So, I built something of my own.
+- Why: 
+	- [Statshunters.com](https://www.statshunters.com/), [squadrats.com](https://squadrats.com/), ... requires Strava account
+	- so, I quickly built something simple of my own
+- Requires:
+	- Linux
+	- Python 3 with pip (usually pre-installed)
 - Usage:
 	```sh
 		$ ./setup.sh     # installs python-libs etc to the project's subdir 'local', so your system stays clean
-		$                # requires Linux, Python 3 with pip
 		$ ./gpx2kml.py   # Generates tile mesh KML file from ./routes/*.gpx
 		$ ./kml2htm.py   # Generates a local tile mesh viewer from KML file and OpenStreetMap
 	```
@@ -22,8 +24,7 @@ _Fig: Tile mesh at different zoom levels_
 	- [Google My Maps](https://www.google.com/maps/d/): create a map, create new layer, import generated KML-file
 
 
-
 ## See Also
 
 - my stared cycling tools on GitHub: https://github.com/stars/andre-st/lists/cycling
-
+- untested: more elaborate https://github.com/mouton0815/view-every-tile
