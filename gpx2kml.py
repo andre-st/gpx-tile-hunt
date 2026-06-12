@@ -12,14 +12,8 @@ from   pyproj           import Transformer
 import simplekml
 
 # Own:
+import config
 
-
-# Static program configuration:
-DEFAULT_GPX_PATTERN = "./routes/*.gpx"
-DEFAULT_KML_FILE    = "routes.kml"
-DEFAULT_TILE_SIZE_M = 1500
-TILE_COLOR_RGB      = "d187ed"  # without '#'
-TILE_OPACITY        = 0.2
 
 # WGS84 <-> Web Mercator:
 to_merc  = Transformer.from_crs( "EPSG:4326", "EPSG:3857", always_xy=True )
@@ -43,13 +37,13 @@ def get_user_args():
 		),
 		formatter_class = RawTextHelpFormatter
 	)
-	parser.add_argument( "gpx_files",           help=f"load route from the given GPX file path, default: {DEFAULT_GPX_PATTERN}", nargs="*" )
-	parser.add_argument( "-o", "--kml-file",    help=f"output KML file, default: {DEFAULT_KML_FILE}",               default=DEFAULT_KML_FILE )
-	parser.add_argument( "-t", "--tile-size-m", help=f"tile size in square meters, default: {DEFAULT_TILE_SIZE_M}", default=DEFAULT_TILE_SIZE_M, type=int )
+	parser.add_argument( "gpx_files",           help=f"load route from the given GPX file path, default: {config.DEFAULT_GPX_PATTERN}", nargs="*" )
+	parser.add_argument( "-o", "--kml-file",    help=f"output KML file, default: {config.DEFAULT_KML_FILE}",               default=config.DEFAULT_KML_FILE )
+	parser.add_argument( "-t", "--tile-size-m", help=f"tile size in square meters, default: {config.DEFAULT_TILE_SIZE_M}", default=config.DEFAULT_TILE_SIZE_M, type=int )
 	args = parser.parse_args()
 	
 	if not args.gpx_files:
-		args.gpx_files = glob.glob( DEFAULT_GPX_PATTERN )
+		args.gpx_files = glob.glob( config.DEFAULT_GPX_PATTERN )
 	
 	if not args.gpx_files:
 		print( "[WARN] GPX files missing. Nothing to do. Try --help" )
@@ -123,11 +117,11 @@ def main():
 	mg  = kml.newmultigeometry()  # Single placemark instead of thousands = smaller KML file
 	
 	# Semi-transparent color (ignored by leaflet-omnivore, not Google My Map)
-	tile_color                 = simplekml.Color.hex( TILE_COLOR_RGB )
+	tile_color                 = simplekml.Color.hex( config.TILE_COLOR_RGB_HEX )
 	tile_style                 = simplekml.Style()
 	tile_style.linestyle.width = 1
 	tile_style.linestyle.color = tile_color
-	tile_style.polystyle.color = simplekml.Color.changealphaint( int(TILE_OPACITY*255), tile_color )
+	tile_style.polystyle.color = simplekml.Color.changealphaint( int(config.TILE_OPACITY*255), tile_color )
 	
 	for tx, ty in occupied_tiles:
 		

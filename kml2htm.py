@@ -7,13 +7,9 @@ from   pathlib import Path
 import html
 
 # Third party:
-# Own:
 
-# Static program configuration:
-DEFAULT_KML_FILE = "routes.kml"
-DEFAULT_HTM_FILE = "routes.html"
-TILE_COLOR_RGB   = "d187ed"  # Without '#'
-TILE_OPACITY     = 0.2
+# Own:
+import config
 
 
 def get_user_args():
@@ -33,8 +29,8 @@ def get_user_args():
 		),
 		formatter_class = RawTextHelpFormatter
 	)
-	parser.add_argument( "kml_file",          help=f"input KML file path with tiles, default: {DEFAULT_KML_FILE}", default=DEFAULT_KML_FILE, nargs="?" )
-	parser.add_argument( "-o", "--htm-file",  help=f"output HTML file, default: {DEFAULT_HTM_FILE}",               default=DEFAULT_HTM_FILE )
+	parser.add_argument( "kml_file",          help=f"input KML file path with tiles, default: {config.DEFAULT_KML_FILE}", default=config.DEFAULT_KML_FILE, nargs="?" )
+	parser.add_argument( "-o", "--htm-file",  help=f"output HTML file, default: {config.DEFAULT_HTM_FILE}",               default=config.DEFAULT_HTM_FILE )
 	args = parser.parse_args()
 	
 	return args
@@ -95,9 +91,9 @@ def main():
   const bounds   = kmlLayer.getBounds();
   map.fitBounds( bounds );
   kmlLayer.setStyle({{  // Omnivore KML does not implement <Style>
-    color:       "#{TILE_COLOR_RGB}",
-    fillColor:   "#{TILE_COLOR_RGB}",
-    fillOpacity: {TILE_OPACITY}
+    color:       "#{config.TILE_COLOR_RGB_HEX}",
+    fillColor:   "#{config.TILE_COLOR_RGB_HEX}",
+    fillOpacity: {config.TILE_OPACITY}
   }});
   kmlLayer.addTo( map );
 
