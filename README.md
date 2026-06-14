@@ -3,12 +3,14 @@
 ![Maintenance](https://img.shields.io/maintenance/yes/2026.svg)
 
 ![Tile Hunt Map](README.jpg)  
-_Fig: Map showing the visited areas in blue — each 1.5 km² (configurable) in size — at various zoom levels_
+_Fig: Map showing often/rarely visited areas in blue/red — each 1.5 km² (configurable) — at various zoom levels_
 
 - Why: 
 	- [Statshunters.com](https://www.statshunters.com/), [squadrats.com](https://squadrats.com/), ... 
-		require payed and maintained Strava account
-	- so, I built something simple of my own (80/20)
+		require payed(?) and maintained [Strava.com](https://www.strava.com/) account
+	- subscription fatigue
+	- processing time limits
+	- so, I built something simple (80/20 rule) that just lives on my computer
 - Requires:
 	- Linux
 	- Python 3 with pip (usually pre-installed)

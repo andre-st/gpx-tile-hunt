@@ -1,9 +1,10 @@
 #!/usr/bin/env ./local/bin/python
 
 # Standard:
-import argparse
-from   argparse import RawTextHelpFormatter
 import glob
+import argparse
+from   argparse    import RawTextHelpFormatter
+from   collections import Counter
 
 # Third party:
 import gpxpy
@@ -23,14 +24,14 @@ to_wgs84 = Transformer.from_crs( "EPSG:3857", "EPSG:4326", always_xy=True )
 def get_user_args():
 	parser = argparse.ArgumentParser(
 		description = (
-			"Gemerates a tiles mesh KML file from given GPX routes to identify undiscovered areas more easily\n\n"
+			"Gemerates a tiles mesh KML-file from given GPX routes to identify undiscovered areas more easily\n\n"
 			"Author: https://github.com/andre-st/" 
 		),
 		epilog = (
 			"Examples:\n"
 			"  ./gpx2kml.py\n"
 			"  ./gpx2kml.py --kml-file=routes.kml\n"
-			"  ./gpx2kml.py --kml-file=routes.kml ./routes/*tour_recorded*.gpx\n"
+			"  ./gpx2kml.py ./routes/*tour_recorded*.gpx\n"
 			"\n"
 			"License:\n"
 			"   MIT License"
@@ -56,16 +57,17 @@ def main():
 	
 	####################################################################
 	#
-	#  Read GPX files and collect occupied tiles
+	#  Read GPX files and collect visited tiles
 	#
 	
-	occupied_tiles = set()
+	visited_tiles = Counter()
 	
 	for i, gpx_file in enumerate( args.gpx_files ):
+		
 		print( f"Processing {gpx_file}" )
 		
 		with open( gpx_file, "r", encoding="utf-8" ) as f:
-			gpx = gpxpy.parse(f)
+			gpx = gpxpy.parse( f )
 		
 		coords = []
 		
@@ -105,7 +107,7 @@ def main():
 				)
 				
 				if line.intersects( tile_poly ):
-					occupied_tiles.add( (tx,ty) )
+					visited_tiles[ (tx,ty) ] += 1
 	
 	
 	####################################################################
@@ -114,16 +116,21 @@ def main():
 	#
 	
 	kml = simplekml.Kml()
-	mg  = kml.newmultigeometry()  # Single placemark instead of thousands = smaller KML file
 	
-	# Semi-transparent color (ignored by leaflet-omnivore, not Google My Map)
-	tile_color                 = simplekml.Color.hex( config.TILE_COLOR_RGB_HEX )
-	tile_style                 = simplekml.Style()
-	tile_style.linestyle.width = 1
-	tile_style.linestyle.color = tile_color
-	tile_style.polystyle.color = simplekml.Color.changealphaint( int(config.TILE_OPACITY*255), tile_color )
+	# Semi-transparent colors for low and high visit frequency. 
+	# Note: KML <Style> is used by Google My Maps but ignored by leaflet-omnivore.
+	tile_color_hi                 = simplekml.Color.hex( config.TILE_COLOR_HI_RGB_HEX )
+	tile_color_lo                 = simplekml.Color.hex( config.TILE_COLOR_LO_RGB_HEX )
+	tile_style_hi                 = simplekml.Style()
+	tile_style_lo                 = simplekml.Style()
+	tile_style_hi.linestyle.width = 1
+	tile_style_lo.linestyle.width = 1
+	tile_style_hi.linestyle.color = tile_color_hi
+	tile_style_lo.linestyle.color = tile_color_lo
+	tile_style_hi.polystyle.color = simplekml.Color.changealphaint( int(config.TILE_OPACITY*255), tile_color_hi )
+	tile_style_lo.polystyle.color = simplekml.Color.changealphaint( int(config.TILE_OPACITY*255), tile_color_lo )
 	
-	for tx, ty in occupied_tiles:
+	for (tx, ty), num_visits in visited_tiles.items():
 		
 		minx = tx   * args.tile_size_m
 		miny = ty   * args.tile_size_m
@@ -140,14 +147,13 @@ def main():
 		
 		corners_wgs = [ to_wgs84.transform( x, y )         for x, y     in corners_merc ]
 		corners_wgs = [ (round( lon, 6 ), round( lat, 6 )) for lon, lat in corners_wgs  ]  # less precision = smaller KML file
-		
-		pol       = mg.newpolygon( outerboundaryis=corners_wgs )
-		pol.style = tile_style
+		pol         = kml.newpolygon( outerboundaryis=corners_wgs )
+		pol.style   = tile_style_hi if num_visits >= config.NUM_VISITS_HI else tile_style_lo  # abs. N visits is well-known/beaten path
 	
 	
 	kml.save( args.kml_file )
 	
-	print( f"{len(occupied_tiles)} tiles written to {args.kml_file}" )
+	print( f"{len(visited_tiles)} tiles written to {args.kml_file}" )
 
 
 

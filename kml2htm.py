@@ -79,22 +79,27 @@ def main():
 <script src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
 
 <script>
-  const map = L.map('map').setView([52.52, 13.405], 12);
+  const map = L.map('map').setView( [52.52, 13.405], 12 );
 
-  L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
+  L.tileLayer( 'https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
     maxZoom: 19,
     attribution: '&copy; OpenStreetMap contributors'
-  }}).addTo(map);
+  }}).addTo( map );
 
-  const kmlData  = `{kml_escaped}`;
-  const kmlLayer = omnivore.kml.parse( kmlData );
+  const kmlData = `{kml_escaped}`;
+
+  // Omnivore KML does not implement <Style>
+  const customStyler = L.geoJSON( null, {{
+    style: (feature) => {{
+      return (feature.properties.styleUrl === '#4') 
+          ? {{ color: '#{config.TILE_COLOR_HI_RGB_HEX}', fillColor: '#{config.TILE_COLOR_HI_RGB_HEX}', fillOpacity: {config.TILE_OPACITY} }}
+          : {{ color: '#{config.TILE_COLOR_LO_RGB_HEX}', fillColor: '#{config.TILE_COLOR_LO_RGB_HEX}', fillOpacity: {config.TILE_OPACITY} }}
+    }}
+  }});
+
+  const kmlLayer = omnivore.kml.parse( kmlData, null, customStyler );
   const bounds   = kmlLayer.getBounds();
   map.fitBounds( bounds );
-  kmlLayer.setStyle({{  // Omnivore KML does not implement <Style>
-    color:       "#{config.TILE_COLOR_RGB_HEX}",
-    fillColor:   "#{config.TILE_COLOR_RGB_HEX}",
-    fillOpacity: {config.TILE_OPACITY}
-  }});
   kmlLayer.addTo( map );
 
 </script>
